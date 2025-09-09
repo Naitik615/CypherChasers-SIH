@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Tourist Safety - SIH Project</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">🛡️</div>
+                <div class="brand-text">
+                    <h1>Smart Tourist Safety</h1>
+                    <p>SIH Project - Ministry of DoNER</p>
+                    <p id="welcomeText" style="font-size: 12px; color: #666; margin-top: 2px;"></p>
+                </div>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button class="theme-toggle" onclick="toggleTheme()">
+                        🌙 Theme
+                    </button>
+                    <button class="theme-toggle" onclick="logout()" style="background-color: #dc3545; color: white;">
+                        🚪 Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Image Section -->
+        <section class="video-section">
+            <div class="video-container">
+                <img 
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1mf5t9gk4lW_OpFYrNXzpUwItjn82F7fbPw&s" 
+                    alt="Beautiful Waterfall - Tourist Safety Demo"
+                    style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+            </div>
+            <div class="video-overlay">
+                <h2>Project Overview</h2>
+                <p>Smart Tourist Safety System - Ensuring safe exploration of natural wonders like waterfalls</p>
+            </div>
+        </section>
+
+        <!-- Navigation Buttons -->
+        <nav class="nav-bar">
+            <div class="nav-buttons">
+                <button class="nav-btn sos" onclick="openModal('sos')">
+                    <div class="nav-btn-icon">🚨</div>
+                    <div class="nav-btn-text">SOS Emergency</div>
+                </button>
+                <button class="nav-btn help" onclick="openModal('help')">
+                    <div class="nav-btn-icon">🆘</div>
+                    <div class="nav-btn-text">Tourist Help</div>
+                </button>
+                <button class="nav-btn police" onclick="openModal('police')">
+                    <div class="nav-btn-icon">👮</div>
+                    <div class="nav-btn-text">Police Station</div>
+                </button>
+                <button class="nav-btn hospital" onclick="openModal('hospital')">
+                    <div class="nav-btn-icon">🏥</div>
+                    <div class="nav-btn-text">Hospital</div>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Map Section -->
+            <section class="map-section">
+                <div class="map-header">
+                    <h3 class="map-title">Live Location Map</h3>
+                    <div class="location-status">
+                        📍 Location Active
+                    </div>
+                </div>
+                <div class="map-container">
+                    <div class="map-grid"></div>
+                    <div class="map-marker tourist" title="Your Location"></div>
+                    <div class="map-marker police" title="Police Station - 2.1 km"></div>
+                    <div class="map-marker hospital" title="Hospital - 1.8 km"></div>
+                </div>
+                <div class="map-legend">
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background-color: #007bff;"></div>
+                        <span>Your Location</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background-color: #ff9800;"></div>
+                        <span>Police Station</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background-color: #4caf50;"></div>
+                        <span>Hospital</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Status Section -->
+            <section class="status-section">
+                <h3 class="status-title">Safety Status</h3>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <span class="status-label">Geo-Fence Status</span>
+                        <span class="status-value safe">Within Safe Zone</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Connectivity</span>
+                        <span class="status-value info">Offline-Ready</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Digital ID</span>
+                        <span class="status-value safe">Verified</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Last Alert</span>
+                        <span class="status-value safe">None</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Emergency Contacts</span>
+                        <span class="status-value info">3 Available</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Services Section -->
+        <section class="services-section">
+            <h3>Nearby Services</h3>
+            <div class="services-grid">
+                <div class="service-card">
+                    <h4>Police Stations</h4>
+                    <p>Nearest law enforcement support</p>
+                    <div class="service-item">
+                        <span class="service-name">Central Police Station</span>
+                        <span class="service-distance">2.1 km</span>
+                    </div>
+                    <div class="service-item">
+                        <span class="service-name">Tourist Police Outpost</span>
+                        <span class="service-distance">3.4 km</span>
+                    </div>
+                    <div class="service-item">
+                        <span class="service-name">Highway Patrol</span>
+                        <span class="service-distance">5.2 km</span>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <h4>Hospitals & Medical</h4>
+                    <p>Emergency and healthcare facilities</p>
+                    <div class="service-item">
+                        <span class="service-name">Government Hospital</span>
+                        <span class="service-distance">1.8 km</span>
+                    </div>
+                    <div class="service-item">
+                        <span class="service-name">24x7 Emergency Clinic</span>
+                        <span class="service-distance">2.3 km</span>
+                    </div>
+                    <div class="service-item">
+                        <span class="service-name">Tourist Medical Center</span>
+                        <span class="service-distance">4.1 km</span>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <h4>Tourist Support</h4>
+                    <p>Help and assistance services</p>
+                    <div class="service-item">
+                        <span class="service-name">Tourist Information Center</span>
+                        <span class="service-distance">0.8 km</span>
+                    </div>
+                    <div class="service-item">
+                        <span class="service-name">Emergency Helpline</span>
+                        <span class="service-distance">Call: 1363</span>
+                    </div>
+                    <div class="service-item">
+                        <span class="service-name">Language Support</span>
+                        <span class="service-distance">Available</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Modal for SOS Emergency -->
+    <div id="sosModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">🚨 Emergency Alert</h3>
+                <span class="close" onclick="closeModal('sosModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon">🚨</div>
+                <div class="modal-message">
+                    <strong>Emergency SOS Activated!</strong><br><br>
+                    Your location has been shared with emergency services.<br>
+                    Help is on the way!<br><br>
+                    <strong>Emergency Number: 112</strong>
+                </div>
+                <div class="modal-actions">
+                    <button class="modal-btn primary" onclick="callEmergency()">Call Emergency (112)</button>
+                    <button class="modal-btn secondary" onclick="closeModal('sosModal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Tourist Help -->
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">🆘 Tourist Help</h3>
+                <span class="close" onclick="closeModal('helpModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon">🆘</div>
+                <div class="modal-message">
+                    <strong>Tourist Help Center</strong><br><br>
+                    We're here to assist you with:<br>
+                    • Lost items and documents<br>
+                    • Local guidance and directions<br>
+                    • Language translation support<br>
+                    • Emergency assistance<br><br>
+                    <strong>Helpline: 1363</strong>
+                </div>
+                <div class="modal-actions">
+                    <button class="modal-btn primary" onclick="callHelp()">Call Help (1363)</button>
+                    <button class="modal-btn secondary" onclick="closeModal('helpModal')">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Police Station -->
+    <div id="policeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">👮 Police Station</h3>
+                <span class="close" onclick="closeModal('policeModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon">👮</div>
+                <div class="modal-message">
+                    <strong>Nearest Police Station</strong><br><br>
+                    <strong>Central Police Station</strong><br>
+                    Distance: 2.1 km<br>
+                    Estimated Time: 5 minutes<br><br>
+                    <strong>Address:</strong> Main Street, Tourist Area<br>
+                    <strong>Phone:</strong> +91-XXX-XXXXXXX
+                </div>
+                <div class="modal-actions">
+                    <button class="modal-btn primary" onclick="callPolice()">Call Police Station</button>
+                    <button class="modal-btn secondary" onclick="getDirections()">Get Directions</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Hospital -->
+    <div id="hospitalModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">🏥 Hospital</h3>
+                <span class="close" onclick="closeModal('hospitalModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon">🏥</div>
+                <div class="modal-message">
+                    <strong>Nearest Hospital</strong><br><br>
+                    <strong>Government Hospital</strong><br>
+                    Distance: 1.8 km<br>
+                    Estimated Time: 4 minutes<br><br>
+                    <strong>Address:</strong> Medical District, Tourist Area<br>
+                    <strong>Phone:</strong> +91-XXX-XXXXXXX<br>
+                    <strong>Emergency:</strong> 24/7 Available
+                </div>
+                <div class="modal-actions">
+                    <button class="modal-btn primary" onclick="callHospital()">Call Hospital</button>
+                    <button class="modal-btn secondary" onclick="getDirections()">Get Directions</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for theme toggle and modals -->
+    <script>
+        // Check if user is logged in
+        window.onload = function() {
+            const touristId = localStorage.getItem('touristId');
+            if (!touristId) {
+                // Redirect to login if not authenticated
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Display welcome message with tourist ID
+            const welcomeText = document.getElementById('welcomeText');
+            const loginTime = localStorage.getItem('loginTime');
+            const timeAgo = loginTime ? new Date(loginTime).toLocaleTimeString() : 'now';
+            welcomeText.textContent = `Welcome, Tourist ID: ${touristId} | Logged in at ${timeAgo}`;
+        };
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('touristId');
+            localStorage.removeItem('loginTime');
+            window.location.href = 'login.html';
+        }
+
+        // Theme toggle function
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            const themeButton = document.querySelector('.theme-toggle');
+            if (document.body.classList.contains('dark-theme')) {
+                themeButton.innerHTML = '☀️ Theme';
+            } else {
+                themeButton.innerHTML = '🌙 Theme';
+            }
+        }
+
+        // Modal functions
+        function openModal(modalType) {
+            const modalId = modalType + 'Modal';
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Demo functions for buttons
+        function callEmergency() {
+            alert('Demo: Calling Emergency Services (112)\n\nIn a real app, this would:\n- Dial 112 automatically\n- Share your location\n- Send emergency alert to authorities');
+            closeModal('sosModal');
+        }
+
+        function callHelp() {
+            alert('Demo: Calling Tourist Help (1363)\n\nIn a real app, this would:\n- Connect to tourist helpline\n- Provide language support\n- Offer local assistance');
+            closeModal('helpModal');
+        }
+
+        function callPolice() {
+            alert('Demo: Calling Police Station\n\nIn a real app, this would:\n- Dial the police station directly\n- Share your location\n- Connect you to local law enforcement');
+            closeModal('policeModal');
+        }
+
+        function callHospital() {
+            alert('Demo: Calling Hospital\n\nIn a real app, this would:\n- Dial the hospital directly\n- Share your medical information\n- Connect you to emergency services');
+            closeModal('hospitalModal');
+        }
+
+        function getDirections() {
+            alert('Demo: Getting Directions\n\nIn a real app, this would:\n- Open Google Maps or navigation app\n- Show route to selected location\n- Provide turn-by-turn directions');
+        }
+    </script>
+</body>
+</html>

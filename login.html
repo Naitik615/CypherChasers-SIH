@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tourist Login - Smart Safety System</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Login page specific styles */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .login-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .demo-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .demo-info strong {
+            color: #333;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Dark theme for login */
+        .dark-theme .login-card {
+            background: #2d2d2d;
+            color: #ffffff;
+        }
+
+        .dark-theme .login-title {
+            color: #ffffff;
+        }
+
+        .dark-theme .login-subtitle {
+            color: #cccccc;
+        }
+
+        .dark-theme .form-label {
+            color: #ffffff;
+        }
+
+        .dark-theme .form-input {
+            background: #3d3d3d;
+            border-color: #555;
+            color: #ffffff;
+        }
+
+        .dark-theme .form-input:focus {
+            border-color: #667eea;
+        }
+
+        .dark-theme .demo-info {
+            background: #3d3d3d;
+            color: #cccccc;
+        }
+
+        .dark-theme .demo-info strong {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-logo">🛡️</div>
+            <h1 class="login-title">Tourist Login</h1>
+            <p class="login-subtitle">Smart Tourist Safety System</p>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="touristId">Tourist ID</label>
+                    <input type="text" id="touristId" class="form-input" placeholder="Enter your Tourist ID" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+                </div>
+                
+                <button type="submit" class="login-btn" id="loginBtn">
+                    Login to Safety System
+                </button>
+                
+                <div class="error-message" id="errorMessage">
+                    Invalid Tourist ID or Password. Please try again.
+                </div>
+            </form>
+            
+            <div class="demo-info">
+                <strong>Demo Login:</strong><br>
+                Tourist ID: <code>tourist123</code><br>
+                Password: <code>safety2025</code><br><br>
+                <em>Enter any ID and password to continue (demo mode)</em>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle (same as main page)
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+        }
+
+        // Login form handling
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const touristId = document.getElementById('touristId').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            // Show loading state
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Logging in...';
+            
+            // Simulate login process
+            setTimeout(() => {
+                if (touristId && password) {
+                    // Store tourist ID in localStorage for main page
+                    localStorage.setItem('touristId', touristId);
+                    localStorage.setItem('loginTime', new Date().toISOString());
+                    
+                    // Redirect to main page
+                    window.location.href = 'index.html';
+                } else {
+                    // Show error
+                    errorMessage.style.display = 'block';
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Login to Safety System';
+                }
+            }, 1500);
+        });
+
+        // Clear error when user starts typing
+        document.getElementById('touristId').addEventListener('input', function() {
+            document.getElementById('errorMessage').style.display = 'none';
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            document.getElementById('errorMessage').style.display = 'none';
+        });
+
+        // Auto-fill demo credentials on double-click
+        document.querySelector('.demo-info').addEventListener('dblclick', function() {
+            document.getElementById('touristId').value = 'tourist123';
+            document.getElementById('password').value = 'safety2025';
+        });
+    </script>
+</body>
+</html>
