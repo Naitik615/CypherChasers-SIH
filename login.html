@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tourist Login - Smart Safety System</title>
+    <title>Smart Tourist Safety Login</title>
     <link rel="stylesheet" href="styles.css">
     <style>
         /* Login page specific styles */
@@ -164,7 +164,7 @@
     <div class="login-container">
         <div class="login-card">
             <div class="login-logo">🛡️</div>
-            <h1 class="login-title">Tourist Login</h1>
+            <h1 class="login-title">Smart Tourist Safety Login</h1>
             <p class="login-subtitle">Smart Tourist Safety System</p>
             
             <form id="loginForm">
@@ -217,20 +217,26 @@
             
             // Simulate login process
             setTimeout(() => {
-                if (touristId && password) {
-                    // Store tourist ID in localStorage for main page
-                    localStorage.setItem('touristId', touristId);
+                if (touristId === '123' && password === '321') {
+                    // Only these exact credentials go to authority dashboard
+                    localStorage.setItem('role', 'authority');
+                    localStorage.setItem('authorityId', touristId);
                     localStorage.setItem('loginTime', new Date().toISOString());
-                    
-                    // Redirect to main page
+                    window.location.href = 'authority.html';
+                } else if (touristId && password) {
+                    // Any other non-empty credentials go to main page
+                    localStorage.setItem('role', 'tourist');
+                    localStorage.setItem('touristId', touristId || 'TOUR' + Math.floor(1000 + Math.random() * 9000));
+                    localStorage.setItem('loginTime', new Date().toISOString());
                     window.location.href = 'index.html';
                 } else {
-                    // Show error
+                    // Show error if fields are empty
                     errorMessage.style.display = 'block';
+                    errorMessage.textContent = 'Please enter both ID and password';
                     loginBtn.disabled = false;
                     loginBtn.textContent = 'Login to Safety System';
                 }
-            }, 1500);
+            }, 500);
         });
 
         // Clear error when user starts typing
