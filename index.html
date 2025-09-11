@@ -30,19 +30,66 @@
             </div>
         </header>
 
-        <!-- Image Section -->
+        <!-- Video Section -->
         <section class="video-section">
             <div class="video-container">
                 <video id="safetyVideo" width="100%" height="100%" autoplay loop controls>
-                    <source src="tourist-safety-vid.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
+                    <source src="./tourist-safety-vid.mp4" type="video/mp4">
+                    <p>Your browser doesn't support HTML5 video. Here's a <a href="./tourist-safety-vid.mp4">link to the video</a> instead.</p>
                 </video>
+                <script>
+                    // Enable sound and autoplay for the video
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const video = document.getElementById('safetyVideo');
+                        video.muted = false; // Enable sound
+                        video.play().catch(error => {
+                            console.log('Autoplay prevented:', error);
+                            // Show play button if autoplay is prevented
+                            video.controls = true;
+                        });
+                    });
+                </script>
             </div>
-            <div class="video-overlay">
-                <h2>Project Overview</h2>
-                <p>Smart Tourist Safety System - Ensuring safe exploration of natural wonders like waterfalls</p>
-            </div>
+
         </section>
+        
+        <!-- Add this style to ensure proper video display -->
+        <style>
+            .video-container {
+                position: relative;
+                width: 100%;
+                padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+                overflow: hidden;
+                background: #000;
+                border-radius: 8px;
+            }
+            #safetyVideo {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .video-overlay {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(0, 0, 0, 0.6);
+                color: white;
+                padding: 20px;
+                text-align: center;
+            }
+            .video-overlay h2 {
+                margin: 0 0 10px 0;
+                font-size: 1.5em;
+            }
+            .video-overlay p {
+                margin: 0;
+                font-size: 1em;
+            }
+        </style>
 
         <!-- Navigation Buttons -->
         <nav class="nav-bar">
