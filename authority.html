@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authority Dashboard - Smart Tourist Safety</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Authority-specific styles */
+        .modal-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        
+        .modal-btn.primary {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .modal-btn.secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .modal-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        
+        .service-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .service-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status-value {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-value.info {
+            background-color: #e7f1ff;
+            color: #004085;
+        }
+        
+        .status-value.safe {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status-value.warning {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">🛡️</div>
+                    <div class="brand-text">
+                        <h1>Authority Dashboard</h1>
+                        <p>Smart Tourist Safety · SIH</p>
+                        <p id="welcomeText" style="font-size: 12px; color: #666; margin-top: 2px;"></p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button class="theme-toggle" onclick="toggleTheme()">🌙 Theme</button>
+                    <button class="theme-toggle" onclick="logout()" style="background-color: #dc3545; color: white;">🚪 Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Alerts & Tourists -->
+        <section class="services-section">
+            <h3>Incoming Alerts & Tourists</h3>
+            <div class="services-grid" style="grid-template-columns: 2fr 1fr;">
+                <div>
+                    <h4 style="margin-bottom:10px;">Alerts</h4>
+                    <div id="alertsContainer" class="services-grid" style="grid-template-columns: 1fr;">
+                        <!-- Alerts will be inserted here -->
+                    </div>
+                </div>
+                <div>
+                    <h4 style="margin-bottom:10px;">Tourists in Boundary (Demo)</h4>
+                    <div id="touristsContainer" class="service-card">
+                        <!-- Tourists list here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Map and Status -->
+        <div class="main-content">
+            <section class="map-section">
+                <div class="map-header">
+                    <h3 class="map-title">Active Incident Map (Demo)</h3>
+                    <div class="location-status">
+                        📍 Monitoring Enabled
+                    </div>
+                </div>
+                <div class="map-container" id="map">
+                    <div class="map-grid"></div>
+                    <div id="authorityMarker" class="map-marker police" title="Authority HQ"></div>
+                    <div id="touristMarker" class="map-marker tourist" style="top:50%;left:55%;" title="Tourist (Demo)"></div>
+                    <div id="hospitalMarker" class="map-marker hospital" style="top:65%;left:40%;" title="Hospital (Demo)"></div>
+                </div>
+                <div class="map-legend">
+                    <div class="legend-item"><div class="legend-dot" style="background:#007bff;"></div><span>Tourist</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#ff9800;"></div><span>Authority</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#4caf50;"></div><span>Hospital</span></div>
+                </div>
+            </section>
+
+            <section class="status-section">
+                <h3 class="status-title">System Status</h3>
+                <div class="status-grid">
+                    <div class="status-item"><span class="status-label">Alert Queue</span><span id="queueCount" class="status-value info">0</span></div>
+                    <div class="status-item"><span class="status-label">Resolved Today</span><span id="resolvedCount" class="status-value safe">0</span></div>
+                    <div class="status-item"><span class="status-label">Pending Actions</span><span id="pendingCount" class="status-value warning">0</span></div>
+                </div>
+            </section>
+        </div>
+
+        <footer class="footer">© 2025 Smart India Hackathon - Smart Tourist Safety</footer>
+    </div>
+
+    <script>
+        // Auth guard
+        window.onload = function() {
+            const role = localStorage.getItem('role');
+            if (role !== 'authority') {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const authorityId = localStorage.getItem('authorityId') || 'AUTH' + Math.floor(1000 + Math.random() * 9000);
+            const loginTime = localStorage.getItem('loginTime') || new Date().toISOString();
+            localStorage.setItem('loginTime', loginTime);
+            
+            const timeStr = new Date(loginTime).toLocaleTimeString();
+            document.getElementById('welcomeText').textContent = `Welcome, Authority ID: ${authorityId} | Logged in at ${timeStr}`;
+
+            // Initialize with demo data if none exists
+            if (!localStorage.getItem('alerts')) {
+                const demoAlerts = [
+                    {
+                        id: 'alert1',
+                        title: 'SOS Alert',
+                        message: 'Emergency assistance required at Waterfall Point',
+                        touristId: 'TOUR' + Math.floor(1000 + Math.random() * 9000),
+                        time: new Date().toLocaleTimeString(),
+                        status: 'new',
+                        location: { lat: 28.6139, lng: 77.2090 }
+                    },
+                    {
+                        id: 'alert2',
+                        title: 'Medical Emergency',
+                        message: 'First aid needed at Viewpoint 3',
+                        touristId: 'TOUR' + Math.floor(1000 + Math.random() * 9000),
+                        time: new Date(Date.now() - 1000 * 60 * 15).toLocaleTimeString(),
+                        status: 'acknowledged',
+                        location: { lat: 28.6145, lng: 77.2080 }
+                    }
+                ];
+                localStorage.setItem('alerts', JSON.stringify(demoAlerts));
+            }
+
+            renderAlerts();
+            renderTourists();
+            updateStats();
+            
+            // Simulate new alerts every 30 seconds
+            setInterval(simulateNewAlert, 30000);
+        };
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            // Save theme preference
+            const isDark = document.body.classList.contains('dark-theme');
+            localStorage.setItem('darkTheme', isDark);
+        }
+
+        // Apply saved theme
+        if (localStorage.getItem('darkTheme') === 'true') {
+            document.body.classList.add('dark-theme');
+        }
+
+        function logout() {
+            localStorage.removeItem('role');
+            localStorage.removeItem('authorityId');
+            window.location.href = 'login.html';
+        }
+
+        function getAlerts() {
+            return JSON.parse(localStorage.getItem('alerts') || '[]');
+        }
+
+        function setAlerts(alerts) {
+            localStorage.setItem('alerts', JSON.stringify(alerts));
+        }
+
+        function renderAlerts() {
+            const container = document.getElementById('alertsContainer');
+            const alerts = getAlerts();
+            container.innerHTML = '';
+            
+            if (alerts.length === 0) {
+                container.innerHTML = '<div class="service-card">No alerts yet. Alerts triggered by the tourist will appear here.</div>';
+                return;
+            }
+            
+            // Sort alerts by status and time (newest first)
+            alerts.sort((a, b) => {
+                if (a.status === b.status) {
+                    return new Date(b.time) - new Date(a.time);
+                }
+                // Show 'new' alerts first, then 'acknowledged', then others
+                const statusOrder = { 'new': 1, 'acknowledged': 2, 'resolved': 3 };
+                return statusOrder[a.status] - statusOrder[b.status];
+            });
+
+            alerts.forEach(alert => {
+                const card = document.createElement('div');
+                card.className = 'service-card';
+                card.style.borderLeft = `4px solid ${
+                    alert.status === 'new' ? '#ff9800' : 
+                    alert.status === 'acknowledged' ? '#2196f3' : '#4caf50'
+                }`;
+                
+                card.innerHTML = `
+                    <h4>${alert.title} <span style="font-size:12px;color:#666;">(${alert.status})</span></h4>
+                    <p>${alert.message}</p>
+                    <div class="service-item">
+                        <span class="service-name">Tourist ID</span>
+                        <span class="service-distance">${alert.touristId}</span>
+                    </div>
+                    <div class="service-item">
+                        <span class="service-name">Time</span>
+                        <span class="service-distance">${alert.time}</span>
+                    </div>
+                    <div class="service-item" style="border-bottom:none; justify-content:flex-end; gap:8px;">
+                        <button class="modal-btn primary" onclick="focusTourist('${alert.touristId}', ${alert.location?.lat || 0}, ${alert.location?.lng || 0})">
+                            Focus on Map
+                        </button>
+                        ${alert.status === 'new' ? `
+                            <button class="modal-btn primary" onclick="ackAlert('${alert.id}')">
+                                Acknowledge
+                            </button>
+                        ` : ''}
+                        <button class="modal-btn secondary" onclick="resolveAlert('${alert.id}')">
+                            ${alert.status === 'resolved' ? 'Reopen' : 'Resolve'}
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderTourists() {
+            const container = document.getElementById('touristsContainer');
+            const alerts = getAlerts();
+            const activeAlerts = alerts.filter(a => a.status !== 'resolved');
+            const uniqueTourists = [];
+            const seen = new Set();
+            
+            // Get unique tourists with their latest alert
+            activeAlerts.forEach(alert => {
+                if (!seen.has(alert.touristId)) {
+                    seen.add(alert.touristId);
+                    uniqueTourists.push(alert);
+                }
+            });
+
+            if (uniqueTourists.length === 0) {
+                container.innerHTML = '<div class="service-card">No active tourists in boundary.</div>';
+                return;
+            }
+            
+            const list = document.createElement('div');
+            uniqueTourists.forEach(alert => {
+                const row = document.createElement('div');
+                row.className = 'service-item';
+                row.innerHTML = `
+                    <span class="service-name">${alert.touristId}</span>
+                    <div>
+                        <span class="status-value ${alert.status === 'new' ? 'warning' : 'info'}" style="margin-right: 8px;">
+                            ${alert.status === 'new' ? 'New Alert' : 'Active'}
+                        </span>
+                        <button class="modal-btn primary" onclick="focusTourist('${alert.touristId}', ${alert.location?.lat || 0}, ${alert.location?.lng || 0})">
+                            Show
+                        </button>
+                    </div>
+                `;
+                list.appendChild(row);
+            });
+            
+            container.innerHTML = '';
+            container.appendChild(list);
+        }
+
+        function focusTourist(touristId, lat, lng) {
+            const map = document.getElementById('map');
+            const marker = document.getElementById('touristMarker');
+            
+            // If coordinates are provided, use them; otherwise, use random position
+            if (lat && lng) {
+                // This is a simplified version - in a real app, you'd convert lat/lng to map coordinates
+                const top = 50 + ((lat - 28.6139) * 1000);
+                const left = 50 + ((lng - 77.2090) * 1000);
+                marker.style.top = Math.max(10, Math.min(90, top)) + '%';
+                marker.style.left = Math.max(10, Math.min(90, left)) + '%';
+            } else {
+                // Fallback to random position if no coordinates
+                const top = Math.max(10, Math.min(90, Math.floor(Math.random() * 80) + 10));
+                const left = Math.max(10, Math.min(90, Math.floor(Math.random() * 80) + 10));
+                marker.style.top = top + '%';
+                marker.style.left = left + '%';
+            }
+            
+            marker.title = `Tourist ${touristId}`;
+            
+            // Add a pulsing animation to highlight the marker
+            marker.style.animation = 'pulse 1s 3';
+            setTimeout(() => {
+                marker.style.animation = '';
+            }, 3000);
+            
+            // Scroll to the map
+            document.getElementById('map').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function ackAlert(id) {
+            const alerts = getAlerts();
+            const idx = alerts.findIndex(a => a.id === id);
+            if (idx !== -1) {
+                alerts[idx].status = 'acknowledged';
+                alerts[idx].time = new Date().toLocaleTimeString();
+                setAlerts(alerts);
+                renderAlerts();
+                renderTourists();
+                updateStats();
+                showNotification('Alert acknowledged');
+            }
+        }
+
+        function resolveAlert(id) {
+            const alerts = getAlerts();
+            const idx = alerts.findIndex(a => a.id === id);
+            if (idx !== -1) {
+                if (alerts[idx].status === 'resolved') {
+                    alerts[idx].status = 'new';
+                    showNotification('Alert reopened');
+                } else {
+                    alerts[idx].status = 'resolved';
+                    showNotification('Alert resolved');
+                }
+                alerts[idx].time = new Date().toLocaleTimeString();
+                setAlerts(alerts);
+                renderAlerts();
+                renderTourists();
+                updateStats();
+            }
+        }
+
+        function updateStats() {
+            const alerts = getAlerts();
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            
+            const queue = alerts.filter(a => a.status === 'new' || a.status === 'acknowledged').length;
+            const resolvedToday = alerts.filter(a => 
+                a.status === 'resolved' && new Date(a.time) >= today
+            ).length;
+            const pending = alerts.filter(a => a.status === 'new').length;
+            
+            document.getElementById('queueCount').textContent = queue;
+            document.getElementById('resolvedCount').textContent = resolvedToday;
+            document.getElementById('pendingCount').textContent = pending;
+        }
+
+        function simulateNewAlert() {
+            const alertTypes = [
+                {
+                    title: 'SOS Alert',
+                    message: 'Emergency assistance required at Waterfall Point',
+                    location: { 
+                        lat: 28.6139 + (Math.random() * 0.01 - 0.005), 
+                        lng: 77.2090 + (Math.random() * 0.01 - 0.005) 
+                    }
+                },
+                {
+                    title: 'Medical Emergency',
+                    message: 'First aid needed at Viewpoint ' + (1 + Math.floor(Math.random() * 5)),
+                    location: { 
+                        lat: 28.6139 + (Math.random() * 0.01 - 0.005), 
+                        lng: 77.2090 + (Math.random() * 0.01 - 0.005) 
+                    }
+                },
+                {
+                    title: 'Lost Tourist',
+                    message: 'Tourist reported lost near Forest Trail',
+                    location: { 
+                        lat: 28.6139 + (Math.random() * 0.01 - 0.005), 
+                        lng: 77.2090 + (Math.random() * 0.01 - 0.005) 
+                    }
+                }
+            ];
+            
+            const alertType = alertTypes[Math.floor(Math.random() * alertTypes.length)];
+            const newAlert = {
+                id: 'alert' + Date.now(),
+                ...alertType,
+                touristId: 'TOUR' + Math.floor(1000 + Math.random() * 9000),
+                time: new Date().toLocaleTimeString(),
+                status: 'new'
+            };
+            
+            const alerts = getAlerts();
+            alerts.unshift(newAlert); // Add to beginning of array
+            setAlerts(alerts);
+            
+            // Only show notification if not the first alert
+            if (alerts.length > 1) {
+                showNotification(`New ${newAlert.title} received`);
+                
+                // Play notification sound if the tab is not active
+                if (document.hidden) {
+                    const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
+                    audio.volume = 0.5;
+                    audio.play().catch(e => console.log('Audio play failed:', e));
+                }
+            }
+            
+            renderAlerts();
+            renderTourists();
+            updateStats();
+        }
+
+        function showNotification(message) {
+            // Check if the browser supports notifications
+            if (!('Notification' in window)) {
+                console.log('This browser does not support desktop notifications');
+                return;
+            }
+            
+            // Check if notification permissions have been granted
+            if (Notification.permission === 'granted') {
+                // If it's okay, create a notification
+                new Notification('Smart Tourist Safety', {
+                    body: message,
+                    icon: 'https://cdn-icons-png.flaticon.com/512/1828/1828640.png'
+                });
+            } else if (Notification.permission !== 'denied') {
+                // Otherwise, ask the user for permission
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        new Notification('Smart Tourist Safety', {
+                            body: message,
+                            icon: 'https://cdn-icons-png.flaticon.com/512/1828/1828640.png'
+                        });
+                    }
+                });
+            }
+        }
+
+        // Add pulse animation for highlighting
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.5); }
+                100% { transform: scale(1); }
+            }
+            .map-marker {
+                transition: all 0.3s ease;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
